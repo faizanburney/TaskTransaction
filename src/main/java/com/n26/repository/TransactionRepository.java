@@ -7,6 +7,7 @@ import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
@@ -15,11 +16,12 @@ public class TransactionRepository {
 
   private AtomicInteger atomicInteger = new AtomicInteger(0);
   private ConcurrentHashMap<Integer, Transaction> transactions = new ConcurrentHashMap<>();
-  private Statistics currentStatistics;
+  @Autowired
+  Statistics currentStatistics;
 
   public void add(final Transaction transaction) {
     transactions.put(atomicInteger.incrementAndGet(), transaction);
-    currentStatistics = new Statistics(getAll());
+    currentStatistics.updateStatistics(getAll());
   }
 
 
@@ -35,7 +37,7 @@ public class TransactionRepository {
 
   public void deleteAll() {
     transactions.clear();
-    currentStatistics = new Statistics(getAll());
+    currentStatistics.updateStatistics(getAll());
   }
 
   /**
@@ -45,6 +47,6 @@ public class TransactionRepository {
   public void removeOlderTransaction() {
     Long expDate = Instant.now().getEpochSecond() - 59;
     transactions.entrySet().removeIf(e -> e.getValue().getTime().toEpochSecond(ZoneOffset.UTC) <= expDate);
-    currentStatistics = new Statistics(getAll());
+    currentStatistics.updateStatistics(getAll());
   }
 }

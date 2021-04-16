@@ -39,7 +39,7 @@ public class AddTransactionTest {
   @Test
   public void givenTransactionAmountAndTimeExactlyLessThanSixtySecondsFromCurrentTime_shouldCreateTransaction() {
     TransactionDto transactionDto = new TransactionDto(new BigDecimal(10.00),
-        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(60));
+        LocalDateTime.now(ZoneOffset.UTC).minusSeconds(59));
     addTransaction.execute(transactionDto);
     assertNotNull(transactionDto);
   }

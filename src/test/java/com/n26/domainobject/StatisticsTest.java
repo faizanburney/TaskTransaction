@@ -21,7 +21,7 @@ public class StatisticsTest {
 
   @Test
   public void shouldReturnStatistics_whenAskedForResults() {
-    Statistics statistics = new Statistics(Collections.EMPTY_LIST);
+    Statistics statistics = new Statistics();
     final SummaryStatisticsDto summaryStatistics = statistics.getSummaryStatistics();
     assertNotNull(summaryStatistics);
     assertEquals(summaryStatistics.getCount(), 0L);
@@ -31,9 +31,9 @@ public class StatisticsTest {
   public void shouldReturnStatisticsForLastSixtySeconds_whenAskedForResults() {
     final List<Transaction> transactionList = createTransactionList();
     transactionList.addAll(createTransactionListOlderThanNow());
-    final SummaryStatisticsDto summaryStatistics = new Statistics(transactionList)
-        .getSummaryStatistics();
-
+    final Statistics statistics = new Statistics();
+    statistics.updateStatistics(transactionList);
+    final SummaryStatisticsDto summaryStatistics = statistics.getSummaryStatistics();
     assertNotNull(summaryStatistics);
     assertEquals(summaryStatistics.getCount(), 3L);
     assertEquals(summaryStatistics.getSum(), "20.00");

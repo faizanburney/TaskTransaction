@@ -4,8 +4,11 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
 
 import com.n26.datatransferobject.SummaryStatisticsDto;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Statistics {
 
   private long count = 0;
@@ -13,7 +16,11 @@ public class Statistics {
   private BigDecimal max = bigDecimal(0.00);
   private BigDecimal min = bigDecimal(Double.MAX_VALUE);
 
-  public Statistics(Collection<Transaction> transactions) {
+  public void updateStatistics(Collection<Transaction> transactions) {
+    count = 0;
+    sum = bigDecimal(0.00);
+    max = bigDecimal(0.00);
+    min = bigDecimal(Double.MAX_VALUE);
     transactions.stream()
         .filter(transaction -> !transaction.isOldTransaction())
         .forEach(this::compute);
@@ -22,7 +29,7 @@ public class Statistics {
   public SummaryStatisticsDto getSummaryStatistics() {
     BigDecimal average;
     if (containsTransactions()) {
-      average = sum.divide(new BigDecimal(count), 2, ROUND_HALF_UP);
+      average = sum.divide(new BigDecimal(count), 2, RoundingMode.HALF_UP);
     } else {
       average = bigDecimal(0.00);
       min = bigDecimal(0.00);
@@ -35,8 +42,7 @@ public class Statistics {
   }
 
   private BigDecimal bigDecimal(Double number) {
-    return new BigDecimal(number)
-        .setScale(2, ROUND_HALF_UP);
+    return new BigDecimal(number).setScale(2,  RoundingMode.HALF_UP);
   }
 
   private void compute(Transaction transaction) {
