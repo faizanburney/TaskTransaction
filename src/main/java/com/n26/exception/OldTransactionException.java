@@ -1,8 +1,10 @@
 package com.n26.exception;
 
-public class OldTransactionException extends RuntimeException {
+public class OldTransactionException extends RuntimeException
+{
 
-  public OldTransactionException(String message) {
-    super(message);
-  }
+    public OldTransactionException(String message)
+    {
+        super(message);
+    }
 }

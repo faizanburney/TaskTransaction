@@ -1,20 +1,27 @@
 package com.n26.datatransferobject;
 
-public class ErrorData {
+public class ErrorData
+{
 
-  private String message;
-  private int errorCode;
+    private String message;
+    private int errorCode;
 
-  public ErrorData(String message, int errorCode) {
-    this.message = message;
-    this.errorCode = errorCode;
-  }
 
-  public String getMessage() {
-    return message;
-  }
+    public ErrorData(String message, int errorCode)
+    {
+        this.message = message;
+        this.errorCode = errorCode;
+    }
 
-  public int getErrorCode() {
-    return errorCode;
-  }
+
+    public String getMessage()
+    {
+        return message;
+    }
+
+
+    public int getErrorCode()
+    {
+        return errorCode;
+    }
 }

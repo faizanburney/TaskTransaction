@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import com.n26.exception.FutureTransactionException;
 import com.n26.exception.OldTransactionException;
 import com.n26.datatransferobject.TransactionDto;
-import com.n26.service.AddTransaction;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -17,45 +16,47 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class AddTransactionTest {
+public class TransactionServiceTest
+{
 
   @Autowired
-  private AddTransaction addTransaction;
+  private TransactionService transactionService;
 
   @Test
-  public void givenTransactionTimeAndAmount_shouldSaveTransaction() {
+  public void shouldSaveTransaction() {
     TransactionDto transactionDto = new TransactionDto(new BigDecimal(10.00), LocalDateTime.now(ZoneOffset.UTC));
-    addTransaction.execute(transactionDto);
+    transactionService.add(transactionDto);
     assertNotNull(transactionDto);
   }
 
   @Test(expected = OldTransactionException.class)
-  public void givenTransactionAmountAndTimeLessThanSixtySecondsFromCurrentTime_shouldFailTransaction() {
+  public void transactionAmountAndTimeLessThanSixtySeconds_shouldFailTransaction() {
     TransactionDto transactionDto = new TransactionDto(new BigDecimal(10.00),
         LocalDateTime.now(ZoneOffset.UTC).minusMinutes(2));
-    addTransaction.execute(transactionDto);
+    transactionService.add(transactionDto);
   }
 
   @Test
-  public void givenTransactionAmountAndTimeExactlyLessThanSixtySecondsFromCurrentTime_shouldCreateTransaction() {
+  public void transactionAmountAndTimeExactlyLessThanSixtySeconds_shouldCreateTransaction() {
     TransactionDto transactionDto = new TransactionDto(new BigDecimal(10.00),
         LocalDateTime.now(ZoneOffset.UTC).minusSeconds(59));
-    addTransaction.execute(transactionDto);
+    transactionService.add(transactionDto);
     assertNotNull(transactionDto);
   }
 
   @Test(expected = FutureTransactionException.class)
-  public void givenTransactionAmountAndTimeInFuture_shouldFailTransaction() {
+  public void transactionAmountAndTimeInFuture_shouldFailTransaction() {
     TransactionDto transactionDto = new TransactionDto(new BigDecimal(10.00),
         LocalDateTime.now(ZoneOffset.UTC).plusMinutes(2));
-    addTransaction.execute(transactionDto);
+    transactionService.add(transactionDto);
   }
 
   @Test
-  public void givenTransactionAmountAndTimeExactlyLikeCurrentTime_shouldCreateTransaction() {
+  public void transactionAmountAndTimeExactlyLikeCurrentTime_shouldCreateTransaction() {
     TransactionDto transactionDto = new TransactionDto(new BigDecimal(10.00),
         LocalDateTime.now(ZoneOffset.UTC));
-    addTransaction.execute(transactionDto);
+    transactionService.add(transactionDto);
     assertNotNull(transactionDto);
   }
+  
 }

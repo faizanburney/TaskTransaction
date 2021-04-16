@@ -12,41 +12,39 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TransactionRepository {
+public class TransactionRepository
+{
 
-  private AtomicInteger atomicInteger = new AtomicInteger(0);
-  private ConcurrentHashMap<Integer, Transaction> transactions = new ConcurrentHashMap<>();
-  @Autowired
-  Statistics currentStatistics;
-
-  public void add(final Transaction transaction) {
-    transactions.put(atomicInteger.incrementAndGet(), transaction);
-    currentStatistics.updateStatistics(getAll());
-  }
+    private AtomicInteger atomicInteger = new AtomicInteger(0);
+    private ConcurrentHashMap<Integer, Transaction> transactions = new ConcurrentHashMap<>();
 
 
-  public Statistics getCurrentStatistics()
-  {
-    return currentStatistics;
-  }
+
+    public void add(final Transaction transaction)
+    {
+        transactions.put(atomicInteger.incrementAndGet(), transaction);
+    }
 
 
-  public Collection<Transaction> getAll() {
-    return transactions.values();
-  }
+    public Collection<Transaction> getAll()
+    {
+        return transactions.values();
+    }
 
-  public void deleteAll() {
-    transactions.clear();
-    currentStatistics.updateStatistics(getAll());
-  }
 
-  /**
-   * Removes older transactions for every seconds.
-   */
-  @Scheduled(fixedDelay = 1 * 1000)
-  public void removeOlderTransaction() {
-    Long expDate = Instant.now().getEpochSecond() - 59;
-    transactions.entrySet().removeIf(e -> e.getValue().getTime().toEpochSecond(ZoneOffset.UTC) <= expDate);
-    currentStatistics.updateStatistics(getAll());
-  }
+    public void deleteAll()
+    {
+        transactions.clear();
+
+    }
+
+
+    /**
+     * Removes expired transactions
+     */
+    public void removeExpiredTransaction()
+    {
+        Long expDate = Instant.now().getEpochSecond() - 59;
+        transactions.entrySet().removeIf(e -> e.getValue().getTime().toEpochSecond(ZoneOffset.UTC) <= expDate);
+    }
 }

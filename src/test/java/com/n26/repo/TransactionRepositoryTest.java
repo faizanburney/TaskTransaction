@@ -30,7 +30,7 @@ public class TransactionRepositoryTest {
   }
 
   @Test
-  public void givenTransaction_shouldSave() {
+  public void transaction_shouldSave() {
     transactionRepository.add(new Transaction(new BigDecimal(10.00), LocalDateTime.now(ZoneOffset.UTC)));
   }
 
